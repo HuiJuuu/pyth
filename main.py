@@ -1,3 +1,4 @@
+#파일 -> CMD -> .\venv\Scripts\python.exe main.py
 
 from drawing import Drawer
 from game_object import Snake, Food, Wall
