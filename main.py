@@ -1,132 +1,82 @@
-#파일 -> CMD -> .\venv\Scripts\python.exe main.py
+import pygame
 
-from drawing import Drawer
-from game_object import Snake, Food, Wall
-import keyboard     # 모듈 설치를 위해 Alt + Enter 를 누르고 설치를 누름
-import time
-import random
-import os
+pygame.init()
 
-#CMD의 모든 텍스트를 지운다.
-os.system('cls')
+# 색상 정의
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+BLUE = (0, 0, 255)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
+GRAY = (20, 20, 20)
 
-#화면을 다루기 위해 DRAWER 클래스의 인스턴스 생성
-drawer = Drawer()
+# 화면 크기 설정
+size = (1280, 720)  # 1280 * 720
+screen = pygame.display.set_mode(size)
 
-#화면의 커서를 지운다.
-drawer.set_cusor_visible(False)
+# 게임 제목 설정
+pygame.display.set_caption("Avoid the Bullets")
 
-class GameManager:
-    # GameManager 의 생성자
-    #size는 30이 들어오면 30X30을 의미
-    def __init__(self, size):
-        self.size = size
+# 프레임을 정하기 위한 변수
+clock = pygame.time.Clock()
 
-        # 입력받은 size만큼 wall 오브젝트를 생성합니다.
-        self.walls = []
-        for x in range (size):
-            for y in range(size):
-                if 1 <= x <= size-2 and 1 <= y <= size-2:
-                    continue
-                self.walls.append(Wall(x, y,'■'))
+#플레이어 위치변수
+player_x = 200
+player_y = 200
+width = 20
+height = 20
+moveSpeed = 3
+bullet_x = 400
+bullet_y = 400
+bullets = []
 
-        # 뱀을 성성하고 맵의 중앙에 배치합니다.
-        self.snake = Snake(size//2, size//2)
+onGame = True
+done = False
 
-        #
-        self.food = self.summon_food()
+# 움직임 구현 함수 (방향키)
+def move(li):
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT] and li[0] > 0:
+        li[0] -= moveSpeed
 
-        #
-        self.is_run = False
+    if keys[pygame.K_RIGHT] and li[0] < 1280 - width:
+        li[0] += moveSpeed
 
-    # 오브젝트가 없는 렌덤힌 위피에 음서을 생성하는 메서드
-    def summon_food(self):
-        new_food = None
-        while True:
-            # 1. 랜덤값을 생성 (x, y)범위는 테두리를 제외한 내부 사각형
-            x = random.randint(1, self.size-2)
-            y = random.randint(1, self.size-2)
-            # 2. 랜덤 좌표로 음식을 생성
-            new_food = Food(x, y, '●')
+    if keys[pygame.K_UP] and li[1] > 0:
+        li[1] -= moveSpeed
 
-            collide = False
-            # 3. 생성된 음식이 현재 있는 오브젝트 들과 충돌하는지 검사 (GameObject는 collision 메소드를 가지고 있음)
-            # 3-1. 음식이 뱀 머리와 부딪히는지 검사 -> collide = True
-            collide = new_food.collision(self.snake)
-            # 3-2. 음식이 뱀 몸과 부딪히는지 검사 -> collide =  True
-            for b in self.snake.body:
-                collide = self.snake.collision(b)
-                if collide:
-                    break
+    if keys[pygame.K_DOWN] and li[1] < 720 - height:
+        li[1] += moveSpeed
 
-            # 4. 충돌하면 다시 1로 돌아가서 반복, 충돌 안 하면 메서드 종료
-            if collide is not True:
-                break
-        return new_food
+    return li[0], li[1]
 
-    # 모든 오브젝트를 화면에 그리는 메서드
-    def draw_all(self):
-        drawer.clear(self.size)     # 맵의 모든 영역을 공백으로 지운다.
-        self.snake.draw(drawer)     # 벰을 그린다.
-        self.food.draw(drawer)      # 음식을 그린다.
-        for w in self.walls:        # 모든 벽을 그린다.
-            w.draw(drawer)
+# 게임 실행 루프
+while not done:
+    # 초당 10프레임
+    clock.tick(60)
 
-    # 게임의 상황을 검사하는 메서드
-    def check(self):
-        # 0. 뱀을 움직인다.
-        self.snake.move()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:  # QUIT이벤트는 창에서 X버튼
+            done = True
+    currLocation = [player_x, player_y]
+    player_x, player_y = move(currLocation)
 
-        # 1. 뱀의 머리가 뱍에 부딪혔는가?
-        for w in self.walls:
-            if w.collision(self.snake):
-                self.is_run = False
+    screen.fill(GRAY)
+    player = pygame.draw.rect(screen, (255, 0, 0), (player_x, player_y, 10, 10))
+    bullet = pygame.draw.rect(screen, (0, 0, 255), (bullet_x, bullet_y, 5, 5))
 
-        # 2. 뱀의 머리가 뱀의 몸에 부딪혔는가?
-        for b in self.snake.body:
-            if b.collision(self.snake):
-                self.is_run = False
+    if player.colliderect(bullet) == True:
 
-        # 3. 뱀의 머리가 음식에 부딪혔는가?
-        if self.snake.collision(self.food):
-            self.food = self.summon_food()
-            self.snake.grow()
+        done = True
+    # 화면을 업데이트 해주는 함수
+    pygame.display.flip()  # 없으면 화면이 그려지지 않음
 
-    #키보드 입력을 처리하는 메서드
-    def control(self):
-        if keyboard.is_pressed('right'):
-            self.snake.command(Snake.D_RIGHT)
-        if keyboard.is_pressed('left'):
-            self.snake.command(Snake.D_LEFT)
-        if keyboard.is_pressed('up'):
-            self.snake.command(Snake.D_UP)
-        if keyboard.is_pressed('down'):
-            self.snake.command(Snake.D_DOWN)
-
-    #게임을 진행하는 메서드 입니다.
-    def run(self):
-        p_clock = 0     # 이전 시간
-        c_clock = 0     # 현재 시간
-        interval = 0    # 누적 시간
-
-        self.is_run = True
-
-        while self.is_run:
-            p_clock = c_clock               # 반복문이 한 바퀴 돌기 전에 시간 저장
-            c_clock = time.time()           # 반복문이 한 바퀴 돈 후 시간 저장
-            interval += c_clock - p_clock   # 반복문이 한 바퀴 도는 동안 지난 시간 누적
-
-            # 누적된 시간이 0.25초 이상이 되면 게임을 한 프레임 진행시킵니다.
-            if interval >= 0.25:
-                interval = 0
-                self.draw_all()
-                self.check()
-
-            # 키보드 입력은 항상 확인해야 합니다.
-            self.control()
+pygame.quit()
 
 
-g = GameManager(21)
-g.run()
-
-
+# Rect = img.get_rect()
+#
+#for bullet in bullet:
+#   if bullet.colliderect(player):
+#      done = True
+#     screen.blit(bullet_image, bullet[rect])
