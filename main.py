@@ -1,4 +1,3 @@
-
 import pygame
 import random
 import time
@@ -100,6 +99,7 @@ enemy_4 = Bullits(random.randrange(10, 1270), random.randrange(10, 710))
 enemy_5 = Bullits(random.randrange(10, 1270), random.randrange(10, 710))
 enemy_6 = Bullits(random.randrange(10, 1270), random.randrange(10, 710))
 
+start_level = 1
 
 # 게임 실행 루프
 while not done:
@@ -145,6 +145,24 @@ while not done:
     text_Rect.y = 10
     screen.blit(text_Title, text_Rect)
 
+
+    score = start_ticks // 1000
+    score_list = [5, 10, 15]
+    level = str(start_level)
+
+
+    for s in score_list:
+        if s == score:
+            start_level = start_level + 1
+            level = str(start_level)
+
+    myFont = pygame.font.SysFont("arial", 30, True, False)
+    text_Tittle_2 = myFont.render("Level : " + level, True, WHITE)
+    text_Rect = text_Title.get_rect()
+    text_Rect.centerx = round(1100)
+    text_Rect.y = 40
+    screen.blit(text_Tittle_2, text_Rect)
+
     if done:
         pygame.display.flip()
         pygame.time.delay(2 * 1000)  # 1 second == 1000 milliseconds
@@ -152,3 +170,6 @@ while not done:
     pygame.display.flip()
 
 pygame.quit()
+
+# import os
+# os.system("pause")
