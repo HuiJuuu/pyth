@@ -59,8 +59,22 @@ class Bullits:
         self.pos_y = y
         self.x_speed = random.uniform(1, 5)
         self.y_speed = random.uniform(1, 5)
-        self.x_speed += 0.5
-        self.y_speed += 0.5
+        #self.x_speed += 0.5
+        #self.y_speed += 0.5
+
+        clock.tick(60)
+        start_ticks = pygame.time.get_ticks()
+
+        self.second = start_ticks // 1000
+        self.second_list = [1, 5, 10, 15, 20, 25, 30]
+
+        for s in self.second_list:
+            if s == self.second:
+                self.x_speed += 0.5
+                self.y_speed += 0.5
+
+
+
 
     def draw(self):
         self.rect = pygame.draw.rect(screen, GREEN, (self.pos_x, self.pos_y, width, height))
@@ -139,7 +153,7 @@ while not done:
 
     time_text = str(start_ticks // 1000)
     myFont = pygame.font.SysFont("arial", 30, True, False)
-    text_Title = myFont.render("Score : " + time_text, True, WHITE)
+    text_Title = myFont.render("Time : " + time_text, True, WHITE)
     text_Rect = text_Title.get_rect()
     text_Rect.centerx = round(1100)
     text_Rect.y = 10
@@ -153,11 +167,11 @@ while not done:
 
     for s in score_list:
         if s == score:
-            start_level = start_level + 1
+            start_level += 1
             level = str(start_level)
 
     myFont = pygame.font.SysFont("arial", 30, True, False)
-    text_Tittle_2 = myFont.render("Level : " + level, True, WHITE)
+    text_Tittle_2 = myFont.render("Score : " + level, True, WHITE)
     text_Rect = text_Title.get_rect()
     text_Rect.centerx = round(1100)
     text_Rect.y = 40
