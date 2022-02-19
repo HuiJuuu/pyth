@@ -36,3 +36,22 @@ st.write("you selected", multi_option)
 #slider
 values = st.slider('Select a range of values', 0.0, 100.0, (25.0, 75.0))
 st.write('Values:', values)
+
+# Text input
+st.text_input("Enter the input")
+
+# If you want 암호화
+st.text_input("Enter the input", type="password")
+
+# Number data
+# default value second input args
+st.number_input("Enter the number",0)
+
+# Multi input text
+st.text_area("Enter the multi text", "hello")
+
+# Enter the date
+st.date_input("data")
+
+# Enter the time
+st.time_input("Time")
