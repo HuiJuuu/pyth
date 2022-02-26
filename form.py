@@ -45,29 +45,23 @@ g = st.number_input("권 수를 입력해주세요.",(0))
 
 # 저장
 num = 0
-sa = open("성별.txt", 'w')
-sb = open("내신등급.txt", 'w')
-sc = open("모고등급.txt", 'w')
-sd = open("학교.txt", 'w')
-se = open("독서기간.txt", 'w')
-sf = open("독서량1.txt", 'w')
-sg = open("독서량2.txt", 'w')
+from glob import glob
 
 if st.button("완료"):
-    num += 1
-    st.write("저장 완료. 감사합니다!")
-    sa.write(a)
+    total_file = glob("./survey_file/*.txt")
+
+    sa = open("./survey_file/{}.txt".format(str(len(total_file) + 1)), 'w')
+
+    st.write("저장완료. 감사합니다.")
+
+    sa.write("성별 : {}\n".format(a))
+    sa.write("내신등급 : {}\n".format(b))
+    sa.write("모고등급 : {}\n".format(c))
+    sa.write("학교 : {}\n".format(d))
+    sa.write("독서를 꾸준히 한 기간 : {}\n".format(e))
+    sa.write("과거 평균 독서량 : {}\n".format(f))
+    sa.write("현재 평균 독서량 : {}\n".format(g))
+    sa.write("독서를 꾸준히 한 기간 : {}\n".format(e))
+
     sa.close()
-    sb.write(b)
-    sb.close()
-    sc.write(c)
-    sc.close()
-    sd.write(d)
-    sd.close()
-    #se.write(e)
-    #se.close()
-    # sf.write(f)
-    # sf.close()
-    # sg.write(g)
-    # sg.close()
 
